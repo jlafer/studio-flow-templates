@@ -1,0 +1,10 @@
+twilio profiles:use DemoBldr
+
+twilio api:studio:v2:flows:list
+
+twilio api:studio:v2:flows:fetch --sid=FW688b47b688bd0e05177d6b12b3261c6f -o=json >flow.json
+
+twilio api:studio:v2:flows:validate:create \
+    --friendly-name "Test Flow" \
+    --status published \
+    --definition <JSON>
