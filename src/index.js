@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const {writeFile} = require('fs/promises');
 const twilio = require('twilio');
 
 const [_node, _pgm, cmd, ...params] = process.argv;
@@ -30,6 +31,13 @@ function listFlows(client) {
 function fetchFlow(client, sid) {
   client.studio.flows(sid).fetch()
   .then(flow => {
-    console.log(`${flow.sid} ${flow.friendlyName}`)
-  });
+    const {sid, status, valid, friendlyName, definition} = flow;
+    const json = JSON.stringify(definition, 0, 4);
+    console.log(`sid=${sid} status=${status} valid=${valid} ${friendlyName}`);
+    return writeFile("output.json", json, 'utf8');
+  })
+  .then((_p) => {
+    console.log('JSON file written')
+  })
+  .catch(err => {console.log('error:', err)});
 }
