@@ -29,6 +29,10 @@ switch (cmd) {
     // create FWxxxx <config-name>
     createFlow(client, params[0], params[1]);
     break;
+  case 'update':
+    // update FWxxxx <jsonFileName> <config-name>
+    updateFlow(client, params[0], params[1], params[2]);
+    break;
   case 'deploy':
     // deploy FWxxxx <config-name>
     deployFlow(client, params[0], params[1]);
@@ -76,6 +80,25 @@ async function createFlow(client, sid, cust) {
     });
     const {sid: newSid, valid} = flow;
     console.log(`created flow: sid=${newSid} status=${status} valid=${valid} ${name}`);
+  }
+  catch (err) {
+    console.log('error:', err);
+  }
+}
+
+async function updateFlow(client, sid, defnFile, cust) {
+  try {
+    const custJson = await readFile(`${cust}_config.json`, 'utf8');
+    const custConfig = JSON.parse(custJson);
+    const {name, status} = custConfig;
+    const json = await readFile(defnFile, 'utf8');;
+    const flow = await client.studio.flows(sid).update({
+      friendlyName: name,
+      status,
+      definition: json
+    });
+    const {valid} = flow;
+    console.log(`updated flow: sid=${sid} status=${status} valid=${valid} ${name}`);
   }
   catch (err) {
     console.log('error:', err);
