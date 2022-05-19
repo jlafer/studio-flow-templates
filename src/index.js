@@ -13,28 +13,36 @@ const {TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN} = process.env;
 const client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 switch (cmd) {
+  case 'help':
+    console.log('list');
+    console.log('get <flow-sid>');
+    console.log('apply <template-flow-sid> <config-name>');
+    console.log('create <json-file> <config-name>');
+    console.log('update <flow-sid> <json-file> <config-name>');
+    console.log('deploy <flow-sid> <config-name>');
+    break;
   case 'list':
     // list 
     listFlows(client);
     break;
   case 'get':
-    // get FWxxxx
+    // get <flow-sid>
     getFlow(client, params[0]);
     break;
   case 'apply':
-    // apply FWxxxx <config-name>
+    // apply <template-flow-sid> <config-name>
     applyParamsToFlow(client, params[0], params[1]);
     break;
   case 'create':
-    // create FWxxxx <config-name>
+    // create <json-file> <config-name>
     createFlow(client, params[0], params[1]);
     break;
   case 'update':
-    // update FWxxxx <jsonFileName> <config-name>
+    // update <flow-sid> <json-file> <config-name>
     updateFlow(client, params[0], params[1], params[2]);
     break;
   case 'deploy':
-    // deploy FWxxxx <config-name>
+    // deploy <flow-sid> <config-name>
     deployFlow(client, params[0], params[1]);
     break;
   default:
@@ -67,12 +75,12 @@ async function applyParamsToFlow(client, sid, cust) {
   }
 }
 
-async function createFlow(client, sid, cust) {
+async function createFlow(client, jsonFile, cust) {
   try {
     const custJson = await readFile(`${cust}_config.json`, 'utf8');
     const custConfig = JSON.parse(custJson);
     const {name, status} = custConfig;
-    const json = await readFile(`${sid}_${cust}.json`, 'utf8');;
+    const json = await readFile(`${jsonFile}.json`, 'utf8');;
     const flow = await client.studio.flows.create({
       friendlyName: name,
       status,
@@ -86,12 +94,12 @@ async function createFlow(client, sid, cust) {
   }
 }
 
-async function updateFlow(client, sid, defnFile, cust) {
+async function updateFlow(client, sid, jsonFile, cust) {
   try {
     const custJson = await readFile(`${cust}_config.json`, 'utf8');
     const custConfig = JSON.parse(custJson);
     const {name, status} = custConfig;
-    const json = await readFile(defnFile, 'utf8');;
+    const json = await readFile(`${jsonFile}.json`, 'utf8');
     const flow = await client.studio.flows(sid).update({
       friendlyName: name,
       status,

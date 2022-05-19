@@ -1,10 +1,35 @@
-twilio profiles:use DemoBldr
+--------------------------------
+Suggested Usage
+--------------------------------
+# set variables in .env using .env.sample as a guide
+# copy sample_config.json to another file named like <somestring>_config.json
+#   and edit values  
 
-twilio api:studio:v2:flows:list
+# set env variable to hold configuration name
+export CONFIG=<somestring>
+export PGM="./src/index.js"
 
-twilio api:studio:v2:flows:fetch --sid=FW688b47b688bd0e05177d6b12b3261c6f -o=json >flow.json
+# get CLI commands
+node $PGM help
 
-twilio api:studio:v2:flows:validate:create \
-    --friendly-name "Test Flow" \
-    --status published \
-    --definition <JSON>
+# list Studio flows
+node $PGM list
+
+# set env variable to hold template IVR flow SID
+export TEMPLATE=<flow-sid>
+
+# apply config values to template to create JSON doc for instance of IVR flow
+node $PGM apply $TEMPLATE $CONFIG
+
+# create Studio flow in Twilio cloud from JSON doc
+node $PGM create ${TEMPLATE}_${CONFIG} $CONFIG
+
+# use output from create step to export SID of new flow
+export FLOW=<flow-sid>
+
+# deploy flow to configured number
+node $PGM deploy $FLOW $CONFIG
+
+# after changes to configuration or template flow...
+node $PGM apply $TEMPLATE $CONFIG
+node $PGM update $FLOW ${TEMPLATE}_${CONFIG} $CONFIG

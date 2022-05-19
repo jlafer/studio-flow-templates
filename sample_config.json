@@ -1,0 +1,16 @@
+{
+  "phone": "<your-e164-twilio-number-here>",
+  "name": "<your-flow-name>",
+  "status": "published",
+  "parameters": [
+    {"token": "LANG", "value": "en-US"},
+    {"token": "VOICE", "value": "Polly.Joanna"},
+    {"token": "WELCOME", "value": "Thanks for calling <the-organization-name>."},
+    {"token": "OPEN_HR", "value": "9 a.m."},
+    {"token": "CLOSE_HR", "value": "6 p.m."},
+    {"token": "OPEN_DAY", "value": "Monday"},
+    {"token": "CLOSE_DAY", "value": "Saturday"},
+    {"token": "EMERGENCY_SUPPORT", "value": "no"},
+    {"token": "EMERGENCY_PHONE", "value": "800, 5 5 5, 1 2 1 2"}
+  ]
+}
